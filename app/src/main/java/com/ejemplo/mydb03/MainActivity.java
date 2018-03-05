@@ -5,11 +5,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.ejemplo.mydb03.utilidades.Adapter;
 import com.ejemplo.mydb03.utilidades.Utilidades;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,20 +27,27 @@ public class MainActivity extends AppCompatActivity {
     private EditText sueldo;
     private EditText resultado;
 
-    SQLiteDatabase db;
-    ConexionSQLiteHelper con;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
+    SQLiteDatabase db;
+
+    ConexionSQLiteHelper con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        con=new ConexionSQLiteHelper(MainActivity.this);
-
+        con=new ConexionSQLiteHelper(this);
         init();
 
-        //listardatos();
-
+        String [][] a = con.consultar("select * from usuario");
+        adapter=new Adapter(a);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
 
     }
 
@@ -66,10 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
         resultado=findViewById(R.id.editText4);
 
+        recyclerView=findViewById(R.id.recyclerView);
+
         btnnew.setOnClickListener(btnListener);
         btndel.setOnClickListener(btnListener);
         btnupdate.setOnClickListener(btnListener);
         btnlist.setOnClickListener(btnListener);
+
+
     }
 
     private View.OnClickListener btnListener = new View.OnClickListener() {

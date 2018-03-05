@@ -18,6 +18,8 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
 
     public ConexionSQLiteHelper(Context context) {
         super(context, Utilidades.DBNAME, null, 1);
+        myDB=getWritableDatabase();
+
     }
 
     @Override
@@ -64,4 +66,20 @@ public class ConexionSQLiteHelper extends SQLiteOpenHelper {
         return myDB.insert(Utilidades.TABLA,null,cv);
     }
 
+    public String[][] consultar(String sql){// select * from usuario
+        Cursor c = myDB.rawQuery(sql,null);
+        String [][] elementos = new String [c.getCount()][c.getColumnCount()];
+        if (c.moveToFirst()){
+            int contador=0;
+            do{
+                elementos[contador][0]=c.getString(c.getColumnIndex("_id"));
+                elementos[contador][1]=c.getString(c.getColumnIndex("clave"));
+                elementos[contador][2]=c.getString(c.getColumnIndex("nombre"));
+                elementos[contador][3]=c.getString(c.getColumnIndex("sueldo"));
+                contador++;
+            }while(c.moveToNext());
+        }
+        if(c!=null){c.close();}
+        return elementos;
+    }
 }
